@@ -45,5 +45,34 @@ def create_table():
     
     return "Data written successfully"
     
+@app.route("/put-via-form", methods=['POST'])
+def put_item():
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('Student-Anjana_DynamoDB')
+
+    #item = {
+      #'regNo': '001',
+      #'name': 'Jane',
+      #'age': 26
+    #}
+    
+    data = request.form.to_dict()
+    
+    table.put_item(Item=data)
+    return "Sucessfully updated"
+    
+@app.route("/update-via-form", methods=['POST'])
+def update_item():
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('Student-Anjana_DynamoDB')
+    
+    reg_no = request.form["regNo"]
+    key_value = str(reg_no)
+    
+    response = table.get_item(Key={'regNo': key_value})
+    if 'Item' not in response:
+        return "Invalid Registration ID"
+    return "Success Registration ID"
+    
 if __name__ == "__main__":
     app.run(debug=True,port=8080,host='0.0.0.0')
